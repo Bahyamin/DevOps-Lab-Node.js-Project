@@ -18,4 +18,10 @@ describe('formatStatus', () => {
   it('steady at or after 1h', () => {
     expect(formatStatus(3600)).toBe('steady')
   })
+  it('warming-up at 0s', () => {
+    expect(formatStatus(0)).toBe('warming-up')
+  })
+  it('healthy at exactly 60s', () => {
+    expect(formatStatus(60)).toBe('healthy')
+  })
 })
