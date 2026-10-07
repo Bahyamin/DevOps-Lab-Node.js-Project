@@ -16,4 +16,3 @@ router.get('/version', (req, res) => {
 })
 
 export default router
-
