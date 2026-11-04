@@ -1,9 +1,11 @@
 /**
- * /api/patients routes (data kept in memory).
- * GET  /api/patients -> list of patients
- * POST /api/patients -> add a patient { name, age }
+ * Patients API (data kept in memory).
+ *  - GET  /api/patients -> list of patients
+ *  - POST /api/patients -> add a patient { name, age } (400 if a field is missing)
+ *
+ * Auto-mounted by app.js on '/', so full paths are declared here.
  */
-import { Router } from 'express'
+import express, { Router } from 'express'
 
 const router = Router()
 
@@ -12,11 +14,11 @@ const patients = [
   { id: 2, name: 'John', age: 45 }
 ]
 
-router.get('/', (_req, res) => {
+router.get('/api/patients', (_req, res) => {
   res.status(200).json(patients)
 })
 
-router.post('/', (req, res) => {
+router.post('/api/patients', express.json(), (req, res) => {
   const { name, age } = req.body
 
   if (!name || !age) {

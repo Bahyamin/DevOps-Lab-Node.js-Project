@@ -98,6 +98,55 @@
       ]
     },
     {
+      "name": "POST patient - missing field (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Julie\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/patients",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "patients"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 400', function () {",
+              "  pm.response.to.have.status(400)",
+              "})",
+              "",
+              "pm.test('Error message is Missing fields', function () {",
+              "  const data = pm.response.json()",
+              "  pm.expect(data.error).to.eql('Missing fields')",
+              "})"
+            ]
+          }
+        }
+      ]
+    },
+    {
       "name": "GET all appointments",
       "request": {
         "method": "GET",
