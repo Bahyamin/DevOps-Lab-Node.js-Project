@@ -1,0 +1,91 @@
+{
+  "info": {
+    "name": "Healthcare API Tests",
+    "description": "Tests for the /api/patients route (GET and POST).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET all patients",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/patients",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "patients"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "  pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "  const data = pm.response.json()",
+              "  pm.expect(data).to.be.an('array')",
+              "})"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST new patient",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Julie\",\n  \"age\": 40\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/patients",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "patients"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () {",
+              "  pm.response.to.have.status(201)",
+              "})",
+              "",
+              "pm.test('Response has id, name and age', function () {",
+              "  const data = pm.response.json()",
+              "  pm.expect(data).to.have.property('id')",
+              "  pm.expect(data).to.have.property('name', 'Julie')",
+              "  pm.expect(data).to.have.property('age', 40)",
+              "})"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -11,12 +11,16 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 import { errorHandler } from './utils/errorHandler.js'
+import patientsRouter from './routes/patients.route.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const require = createRequire(import.meta.url)
 
 const app = express()
+
+// Parse JSON bodies (needed for POST requests)
+app.use(express.json())
 
 // Simple root + health endpoints
 app.get('/', (_req, res) => res.json({ ok: true, message: 'Hello from CI/CD demo 👋' }))
@@ -33,6 +37,9 @@ if (fs.existsSync(autoDir)) {
     if (router) app.use('/', router)
   }
 }
+
+// Patients routes
+app.use('/api/patients', patientsRouter)
 
 // Global error middleware last
 app.use(errorHandler)
