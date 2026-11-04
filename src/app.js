@@ -8,14 +8,12 @@
 import express from 'express'
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { createRequire } from 'node:module'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { errorHandler } from './utils/errorHandler.js'
 import patientsRouter from './routes/patients.route.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const require = createRequire(import.meta.url)
 
 const app = express()
 
@@ -32,7 +30,7 @@ if (fs.existsSync(autoDir)) {
   const files = fs.readdirSync(autoDir).filter(f => f.endsWith('.route.js'))
   for (const f of files) {
     const full = path.join(autoDir, f)
-    const mod = require(full)
+    const mod = await import(pathToFileURL(full).href)
     const router = mod.default || mod
     if (router) app.use('/', router)
   }
