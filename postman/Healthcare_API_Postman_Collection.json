@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Healthcare API Tests",
-    "description": "Tests for the /api/patients route (GET and POST).",
+    "description": "Tests for the /api/patients and /api/appointments routes.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -18,8 +18,13 @@
         "header": [],
         "url": {
           "raw": "{{baseUrl}}/api/patients",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "patients"]
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "patients"
+          ]
         }
       },
       "event": [
@@ -62,8 +67,13 @@
         },
         "url": {
           "raw": "{{baseUrl}}/api/patients",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "patients"]
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "patients"
+          ]
         }
       },
       "event": [
@@ -81,6 +91,181 @@
               "  pm.expect(data).to.have.property('id')",
               "  pm.expect(data).to.have.property('name', 'Julie')",
               "  pm.expect(data).to.have.property('age', 40)",
+              "})"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET all appointments",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/appointments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "appointments"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "  pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "  const data = pm.response.json()",
+              "  pm.expect(data).to.be.an('array')",
+              "})"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST new appointment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"doctor\": \"Dr. Amir Khan\",\n  \"patient\": \"John\",\n  \"date\": \"{{$isoTimestamp}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/appointments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "appointments"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () {",
+              "  pm.response.to.have.status(201)",
+              "})",
+              "",
+              "pm.test('Appointment has an id, doctor, patient and date', function () {",
+              "  const data = pm.response.json()",
+              "  pm.expect(data).to.have.property('id')",
+              "  pm.expect(data.doctor).to.eql('Dr. Amir Khan')",
+              "  pm.expect(data.patient).to.eql('John')",
+              "  pm.expect(data).to.have.property('date')",
+              "})"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST appointment - missing fields (400)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"doctor\": \"Dr. Amir Khan\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/appointments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "appointments"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 400', function () {",
+              "  pm.response.to.have.status(400)",
+              "})"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST appointment - doctor already booked (409)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"doctor\": \"Dr. Sarah Lee\",\n  \"patient\": \"Marie\",\n  \"date\": \"2026-11-10T10:00\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/appointments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "appointments"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 409', function () {",
+              "  pm.response.to.have.status(409)",
               "})"
             ]
           }
