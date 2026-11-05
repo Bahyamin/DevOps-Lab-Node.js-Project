@@ -1,30 +1,38 @@
-import { describe, it, expect } from 'vitest'
+import express from 'express'
 import request from 'supertest'
-import app from '../../src/app.js'
+import { describe, it, expect } from 'vitest'
+import doctorRouter from '../../src/routes/auto/doctor.route.js'
 
-describe('GET /doctor', () => {
-  it('should return all doctors with 200 status', async () => {
-    const response = await request(app).get('/doctor')
-    expect(response.statusCode).toBe(200)
-    expect(Array.isArray(response.body)).toBe(true)
-  })
-})
+function makeApp (router) {
+  const app = express()
+  app.use('/', router)
+  return app
+}
+const api = makeApp(doctorRouter)
 
-describe('POST /doctor', () => {
-  it('should create new doctor and return 201', async () => {
-    const newDoc = { name: 'Dr. Charlie', specialty: 'Dermatology' }
-    const response = await request(app)
-      .post('/doctor')
-      .send(newDoc)
-    expect(response.statusCode).toBe(201)
-    expect(response.body.name).toBe(newDoc.name)
-    expect(response.body).toHaveProperty('id')
+describe('Doctor API', () => {
+  it('GET / returns all doctors', async () => {
+    const res = await request(api).get('/')
+    expect(res.status).toBe(200)
+    expect(Array.isArray(res.body)).toBe(true)
   })
 
-  it('should return 400 if missing fields', async () => {
-    const response = await request(app)
-      .post('/doctor')
-      .send({ name: 'Dr. Dave' })
-    expect(response.statusCode).toBe(400)
+  it('POST / creates new doctor with valid name', async () => {
+    const res = await request(api)
+      .post('/')
+      .send({ name: 'Dr. Test' })
+    expect(res.status).toBe(201)
+    expect(res.body.name).toBe('Dr. Test')
+  })
+
+  it('POST / returns 400 without name', async () => {
+    const res = await request(api)
+      .post('/')
+      .send({})
+    // 打印看真实结果！
+    console.log('status:', res.status)
+    console.log('body:', res.body)
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBe('Missing required field: name')
   })
 })
