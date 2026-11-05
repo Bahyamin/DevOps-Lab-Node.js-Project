@@ -3,7 +3,7 @@ import request from 'supertest'
 import { describe, it, expect } from 'vitest'
 import doctorRouter from '../../src/routes/auto/doctor.route.js'
 
-function makeApp(router) {
+function makeApp (router) {
   const app = express()
   app.use('/', router)
   return app
