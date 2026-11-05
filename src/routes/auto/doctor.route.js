@@ -2,8 +2,8 @@
  * Doctors API (data kept in memory).
  *  - GET    /api/doctors     -> list of doctors
  *  - GET    /api/doctors/:id -> one doctor (404 if not found)
- *  - POST   /api/doctors     -> add a doctor { name } (400 if missing)
- *  - PUT    /api/doctors/:id -> update a doctor { name } (404 / 400)
+ *  - POST   /api/doctors     -> add a doctor { name, specialty } (400 if a field is missing)
+ *  - PUT    /api/doctors/:id -> update a doctor { name, specialty } (404 / 400)
  *  - DELETE /api/doctors/:id -> remove a doctor (204, 404 if not found)
  *
  * Auto-mounted by app.js on '/', so full paths are declared here.
@@ -13,9 +13,9 @@ import express, { Router } from 'express'
 const router = Router()
 
 const doctors = [
-  { id: 1, name: 'Dr. Smith' },
-  { id: 2, name: 'Dr. Martin' },
-  { id: 3, name: 'Dr. Dupont' }
+  { id: 1, name: 'Dr. Smith', specialty: 'Cardiology' },
+  { id: 2, name: 'Dr. Martin', specialty: 'Pediatrics' },
+  { id: 3, name: 'Dr. Dupont', specialty: 'Neurology' }
 ]
 
 router.get('/api/doctors', (_req, res) => {
@@ -32,12 +32,12 @@ router.get('/api/doctors/:id', (req, res) => {
 })
 
 router.post('/api/doctors', express.json(), (req, res) => {
-  const { name } = req.body
-  if (!name) {
-    return res.status(400).json({ error: 'Missing required field: name' })
+  const { name, specialty } = req.body
+  if (!name || !specialty) {
+    return res.status(400).json({ error: 'Missing required fields: name, specialty' })
   }
   const newId = Math.max(...doctors.map(d => d.id)) + 1
-  const newDoctor = { id: newId, name }
+  const newDoctor = { id: newId, name, specialty }
   doctors.push(newDoctor)
   res.status(201).json(newDoctor)
 })
@@ -48,11 +48,11 @@ router.put('/api/doctors/:id', express.json(), (req, res) => {
   if (index === -1) {
     return res.status(404).json({ error: 'Doctor not found' })
   }
-  const { name } = req.body
-  if (!name) {
-    return res.status(400).json({ error: 'Missing required field: name' })
+  const { name, specialty } = req.body
+  if (!name || !specialty) {
+    return res.status(400).json({ error: 'Missing required fields: name, specialty' })
   }
-  doctors[index] = { id, name }
+  doctors[index] = { id, name, specialty }
   res.status(200).json(doctors[index])
 })
 
