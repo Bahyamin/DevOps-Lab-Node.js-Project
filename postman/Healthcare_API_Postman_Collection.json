@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "29affd3f-9513-46ae-a09a-bce1d41f8825",
     "name": "Healthcare API Tests",
-    "description": "Tests for the /api/patients and /api/appointments routes.",
+    "description": "Tests for the /api/patients, /api/appointments, /api/doctors and /api/metrics routes.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "59987126",
     "_collection_link": "https://go.postman.co/collection/59987126-29affd3f-9513-46ae-a09a-bce1d41f8825?source=collection_link"
@@ -320,6 +320,93 @@
           "path": [
             "api",
             "appointments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET all doctors",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () {",
+              "  pm.response.to.have.status(200)",
+              "})",
+              "",
+              "pm.test('Response is an array', function () {",
+              "  pm.expect(pm.response.json()).to.be.an('array')",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/doctors",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "doctors"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST new doctor",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () {",
+              "  pm.response.to.have.status(201)",
+              "})",
+              "",
+              "pm.test('Doctor has an id, name and specialty', function () {",
+              "  const data = pm.response.json()",
+              "  pm.expect(data).to.have.property('id')",
+              "  pm.expect(data).to.have.property('name', 'Dr. Julie')",
+              "  pm.expect(data).to.have.property('specialty', 'Neurology')",
+              "})"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Dr. Julie\",\n  \"specialty\": \"Neurology\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/doctors",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "doctors"
           ]
         }
       },
