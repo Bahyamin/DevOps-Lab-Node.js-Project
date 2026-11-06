@@ -1,32 +1,15 @@
 {
   "info": {
+    "_postman_id": "29affd3f-9513-46ae-a09a-bce1d41f8825",
     "name": "Healthcare API Tests",
     "description": "Tests for the /api/patients and /api/appointments routes.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "59987126",
+    "_collection_link": "https://go.postman.co/collection/59987126-29affd3f-9513-46ae-a09a-bce1d41f8825?source=collection_link"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:3000"
-    }
-  ],
   "item": [
     {
       "name": "GET all patients",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/patients",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "patients"
-          ]
-        }
-      },
       "event": [
         {
           "listen": "test",
@@ -44,10 +27,45 @@
             ]
           }
         }
-      ]
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/patients",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "patients"
+          ]
+        }
+      },
+      "response": []
     },
     {
       "name": "POST new patient",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () {",
+              "  pm.response.to.have.status(201)",
+              "})",
+              "",
+              "pm.test('Response has id, name and age', function () {",
+              "  const data = pm.response.json()",
+              "  pm.expect(data).to.have.property('id')",
+              "  pm.expect(data).to.have.property('name', 'Julie')",
+              "  pm.expect(data).to.have.property('age', 40)",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [
@@ -76,29 +94,28 @@
           ]
         }
       },
+      "response": []
+    },
+    {
+      "name": "POST patient - missing field (400)",
       "event": [
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('Status is 201', function () {",
-              "  pm.response.to.have.status(201)",
+              "pm.test('Status is 400', function () {",
+              "  pm.response.to.have.status(400)",
               "})",
               "",
-              "pm.test('Response has id, name and age', function () {",
+              "pm.test('Error message is Missing fields', function () {",
               "  const data = pm.response.json()",
-              "  pm.expect(data).to.have.property('id')",
-              "  pm.expect(data).to.have.property('name', 'Julie')",
-              "  pm.expect(data).to.have.property('age', 40)",
+              "  pm.expect(data.error).to.eql('Missing fields')",
               "})"
             ]
           }
         }
-      ]
-    },
-    {
-      "name": "POST patient - missing field (400)",
+      ],
       "request": {
         "method": "POST",
         "header": [
@@ -127,41 +144,10 @@
           ]
         }
       },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test('Status is 400', function () {",
-              "  pm.response.to.have.status(400)",
-              "})",
-              "",
-              "pm.test('Error message is Missing fields', function () {",
-              "  const data = pm.response.json()",
-              "  pm.expect(data.error).to.eql('Missing fields')",
-              "})"
-            ]
-          }
-        }
-      ]
+      "response": []
     },
     {
       "name": "GET all appointments",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/appointments",
-          "host": [
-            "{{baseUrl}}"
-          ],
-          "path": [
-            "api",
-            "appointments"
-          ]
-        }
-      },
       "event": [
         {
           "listen": "test",
@@ -179,10 +165,46 @@
             ]
           }
         }
-      ]
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/appointments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "appointments"
+          ]
+        }
+      },
+      "response": []
     },
     {
       "name": "POST new appointment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 201', function () {",
+              "  pm.response.to.have.status(201)",
+              "})",
+              "",
+              "pm.test('Appointment has an id, doctor, patient and date', function () {",
+              "  const data = pm.response.json()",
+              "  pm.expect(data).to.have.property('id')",
+              "  pm.expect(data.doctor).to.eql('Dr. Amir Khan')",
+              "  pm.expect(data.patient).to.eql('John')",
+              "  pm.expect(data).to.have.property('date')",
+              "})"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "POST",
         "header": [
@@ -211,30 +233,23 @@
           ]
         }
       },
+      "response": []
+    },
+    {
+      "name": "POST appointment - missing fields (400)",
       "event": [
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('Status is 201', function () {",
-              "  pm.response.to.have.status(201)",
-              "})",
-              "",
-              "pm.test('Appointment has an id, doctor, patient and date', function () {",
-              "  const data = pm.response.json()",
-              "  pm.expect(data).to.have.property('id')",
-              "  pm.expect(data.doctor).to.eql('Dr. Amir Khan')",
-              "  pm.expect(data.patient).to.eql('John')",
-              "  pm.expect(data).to.have.property('date')",
+              "pm.test('Status is 400', function () {",
+              "  pm.response.to.have.status(400)",
               "})"
             ]
           }
         }
-      ]
-    },
-    {
-      "name": "POST appointment - missing fields (400)",
+      ],
       "request": {
         "method": "POST",
         "header": [
@@ -263,22 +278,23 @@
           ]
         }
       },
+      "response": []
+    },
+    {
+      "name": "POST appointment - doctor already booked (409)",
       "event": [
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('Status is 400', function () {",
-              "  pm.response.to.have.status(400)",
+              "pm.test('Status is 409', function () {",
+              "  pm.response.to.have.status(409)",
               "})"
             ]
           }
         }
-      ]
-    },
-    {
-      "name": "POST appointment - doctor already booked (409)",
+      ],
       "request": {
         "method": "POST",
         "header": [
@@ -307,19 +323,42 @@
           ]
         }
       },
+      "response": []
+    },
+    {
+      "name": "GET /api/metrics",
       "event": [
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('Status is 409', function () {",
-              "  pm.response.to.have.status(409)",
-              "})"
+              "pm.test('Status code is 200', function () {\r\n  pm.response.to.have.status(200)\r\n})\r\npm.test('Response has uptime', function () {\r\n  pm.expect(pm.response.json()).to.have.property('uptime')\r\n})"
             ]
           }
         }
-      ]
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/metrics",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "metrics"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
     }
   ]
 }
